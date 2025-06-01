@@ -11,7 +11,7 @@ import json
 from oauth2client.service_account import ServiceAccountCredentials
 
 # 從 Streamlit secrets 中載入金鑰資訊
-service_account_info = st.secrets["gcp_service_account"]
+service_account_info = json.loads(st.secrets["GOOGLE_SERVICE_ACCOUNT_KEY"])
 creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
 client = gspread.authorize(creds)
 sheet = client.open_by_key("1RR0Y817VsMVpmpQ4Y5ugvG4JH__tGzytRB-8b8l90KE").sheet1
