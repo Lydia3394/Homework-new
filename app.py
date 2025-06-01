@@ -5,14 +5,9 @@ from datetime import datetime
 import pandas as pd
 
 # Google Sheets 認證
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-import streamlit as st
-from oauth2client.service_account import ServiceAccountCredentials
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-# 使用 dict 的形式取得 service account 資訊
-service_account_info = st.secrets["gcp_service_account"]
-# 傳入 dict 給 from_json_keyfile_dict
-creds = ServiceAccountCredentials.from_json_keyfile_dict(service_account_info, scope)
+scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+creds = ServiceAccountCredentials.from_json_keyfile_dict(st.secrets["gcp_service_account"], scope)
+client = gspread.authorize(creds)
 sheet = client.open_by_key("1RR0Y817VsMVpmpQ4Y5ugvG4JH__tGzytRB-8b8l90KE").sheet1
 
 # Streamlit 頁面選擇
