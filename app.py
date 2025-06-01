@@ -58,7 +58,7 @@ elif page == "🗑️ 刪除公告":  # 這一段也要頂格
         delete = st.button("確認刪除", key="delete_button")
 
         if delete:
-            if password == "Administrator":
+            if password == "DELETE":
                 row_index = int(df[df["顯示"] == selected].index[0]) + 2
                 sheet.delete_rows(row_index)
                 st.success("✅ 公告已刪除！請重新整理頁面查看最新列表。")
