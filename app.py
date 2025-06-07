@@ -31,17 +31,17 @@ if page == "📢 發布公告":
         sheet.append_row(new_row)
         st.success("✅ 公告已成功發布！")
 
-elif page == "📋 查看公告":
-    st.title("📋 公告列表")
+view_mode = st.radio("選擇檢視方式", ["逐筆顯示", "表格顯示"])
 
-    data = sheet.get_all_records()
-    df = pd.DataFrame(data)
+if view_mode == "表格顯示":
+    st.dataframe(df[::-1])
+else:
+    for index, row in df[::-1].iterrows():
+        st.subheader(f"📌 {row['標題']}")
+        st.markdown(row['內容'])
+        st.caption(f"🕒 {row['時間']}　✏️ {row['發布人']}")
+        st.divider()
 
-    if not df.empty:
-        # ✅ 顯示公告表格（反轉順序）
-        st.dataframe(df[::-1])
-    else:
-        st.info("目前沒有任何公告。")
         
 elif page == "🗑️ 刪除公告":  # 這一段也要頂格
     st.title("🗑️ 刪除公告")
