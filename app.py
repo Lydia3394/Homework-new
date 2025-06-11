@@ -47,7 +47,7 @@ elif page == "📋 查看公告":
         st.info("目前沒有任何公告。")
 
         
-elif page == "🗑️ 刪除公告":  # 這一段也要頂格
+elif page == "🗑️ 刪除公告":
     st.title("🗑️ 刪除公告")
 
     data = sheet.get_all_records()
@@ -56,15 +56,22 @@ elif page == "🗑️ 刪除公告":  # 這一段也要頂格
     if df.empty:
         st.info("目前沒有任何公告可刪除。")
     else:
-        df["顯示"] = df["標題"] + " | " + df["發布人"] + " | " + df["時間"]
-        selected = st.selectbox("選擇要刪除的公告", df["顯示"], key="delete_selectbox")
-        password = st.text_input("請輸入管理密碼以確認刪除", type="password", key="delete_password")
-        delete = st.button("確認刪除", key="delete_button")
+        # 反轉資料順序（與查看公告一致）
+        reversed_df = df[::-1].reset_index(drop=True)
 
-        if delete:
-            if password == "DELETE":
-                row_index = int(df[df["顯示"] == selected].index[0]) + 2
-                sheet.delete_rows(row_index)
-                st.success("✅ 公告已刪除！請重新整理頁面查看最新列表。")
-            else:
-                st.error("❌ 密碼錯誤，無法刪除。")
+        for i, row in reversed_df.iterrows():
+            with st.expander(f"📌 {row['標題']}　🕒 {row['時間']}　✏️ {row['發布人']}"):
+                st.markdown(row["內容"])
+                with st.form(key=f"delete_form_{i}"):
+                    password = st.text_input("輸入管理密碼以刪除此公告", type="password", key=f"password_{i}")
+                    submit = st.form_submit_button("刪除公告")
+
+                    if submit:
+                        if password == "DELETE":
+                            # 計算實際在 Google Sheet 中的列號
+                            actual_row_index = len(df) - i + 1  # 包含表頭，所以 +1
+                            sheet.delete_rows(actual_row_index)
+                            st.success("✅ 公告已刪除！請重新整理頁面查看最新列表。")
+                            st.stop()
+                        else:
+                            st.error("❌ 密碼錯誤，無法刪除。")
